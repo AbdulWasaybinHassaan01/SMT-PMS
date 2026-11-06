@@ -42,15 +42,6 @@ Open your browser to: **`http://localhost:5000`**
 
 ---
 
-## 🔑 Demo Credentials
-
-| Role | Email | Password | SECRET-CODE |
-|:---|:---|:---|:---|
-| **Admin & Stock Manager** | `admin@techworld.com` | `admin123` | **`ANYONEUSEIT`** |
-| **Customer** | `customer@gmail.com` | `customer123` | *(Leave Blank)* |
-
----
-
 ## 📁 Project Structure
 
 ```
