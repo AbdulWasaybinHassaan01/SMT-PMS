@@ -1,0 +1,111 @@
+@page
+@model TechWorldPMS.Pages.Account.RegisterModel
+@{
+    Layout = "_LoginLayout";
+    ViewData["Title"] = "Create Account";
+}
+
+<div class="auth-card" style="max-width: 500px; margin: 0 auto;">
+    <h1 class="auth-title">Create Account</h1>
+    <p class="auth-subtitle">Enter your details below to create an account</p>
+
+    @if (!ModelState.IsValid && ModelState[string.Empty]?.Errors.Count > 0)
+    {
+        <div class="alert alert-danger py-2 px-3 rounded-3 small mb-3 text-start" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            @foreach (var error in ModelState[string.Empty]!.Errors)
+            {
+                <div>@error.ErrorMessage</div>
+            }
+        </div>
+    }
+
+    <form method="post">
+        <!-- Full Name Field -->
+        <div class="input-group-custom">
+            <label class="input-label-custom" asp-for="Input.FullName">Full Name</label>
+            <div class="input-pill-wrapper">
+                <i class="bi bi-person input-pill-icon"></i>
+                <input asp-for="Input.FullName" class="form-control-pill" autocomplete="name" />
+            </div>
+            <span asp-validation-for="Input.FullName" class="text-danger small mt-1 d-block text-start"></span>
+        </div>
+
+        <!-- Email Field -->
+        <div class="input-group-custom">
+            <label class="input-label-custom" asp-for="Input.Email">Email Address</label>
+            <div class="input-pill-wrapper">
+                <i class="bi bi-envelope input-pill-icon"></i>
+                <input asp-for="Input.Email" class="form-control-pill" autocomplete="email" />
+            </div>
+            <span asp-validation-for="Input.Email" class="text-danger small mt-1 d-block text-start"></span>
+        </div>
+
+        <div class="row g-2">
+            <!-- Password Field -->
+            <div class="col-md-6 input-group-custom">
+                <label class="input-label-custom" asp-for="Input.Password">Password</label>
+                <div class="input-pill-wrapper">
+                    <i class="bi bi-lock input-pill-icon"></i>
+                    <input asp-for="Input.Password" type="password" class="form-control-pill" />
+                </div>
+                <span asp-validation-for="Input.Password" class="text-danger small mt-1 d-block text-start"></span>
+            </div>
+
+            <!-- Confirm Password Field -->
+            <div class="col-md-6 input-group-custom">
+                <label class="input-label-custom" asp-for="Input.ConfirmPassword">Confirm Password</label>
+                <div class="input-pill-wrapper">
+                    <i class="bi bi-lock-fill input-pill-icon"></i>
+                    <input asp-for="Input.ConfirmPassword" type="password" class="form-control-pill" />
+                </div>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger small mt-1 d-block text-start"></span>
+            </div>
+        </div>
+
+        <!-- SECRET-CODE Field -->
+        <div class="input-group-custom">
+            <div class="input-label-custom">
+                <span class="text-warning fw-bold"><i class="bi bi-shield-lock-fill me-1"></i>SECRET-CODE:</span>
+                <span class="badge bg-secondary-subtle text-muted" style="font-size: 0.7rem;">Optional</span>
+            </div>
+            <div class="input-pill-wrapper">
+                <i class="bi bi-key-fill input-pill-icon text-warning"></i>
+                <input asp-for="Input.SecretCode" class="form-control-pill border-warning-subtle" />
+            </div>
+        </div>
+
+        <!-- Address and City for Customer -->
+        <div class="row g-2">
+            <div class="col-md-8 input-group-custom">
+                <label class="input-label-custom" asp-for="Input.Address">House Address (Optional)</label>
+                <div class="input-pill-wrapper">
+                    <i class="bi bi-house-door input-pill-icon"></i>
+                    <input asp-for="Input.Address" class="form-control-pill" />
+                </div>
+            </div>
+            <div class="col-md-4 input-group-custom">
+                <label class="input-label-custom" asp-for="Input.City">City</label>
+                <div class="input-pill-wrapper">
+                    <i class="bi bi-geo-alt input-pill-icon"></i>
+                    <input asp-for="Input.City" class="form-control-pill" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-auth-primary">
+            <span>Create Account</span>
+            <i class="bi bi-arrow-right"></i>
+        </button>
+
+        <!-- Link to Login -->
+        <div class="auth-footer-link">
+            Already have an account? <a asp-page="/Account/Login">Sign in</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

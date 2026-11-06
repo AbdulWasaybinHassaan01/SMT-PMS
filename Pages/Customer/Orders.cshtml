@@ -1,0 +1,115 @@
+@page
+@model TechWorldPMS.Pages.Customer.OrdersModel
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-bag-check fs-3 text-primary"></i>
+        <h2 class="fw-bold mb-0 text-dark">My Orders</h2>
+    </div>
+    <a asp-page="/Customer/Index" class="btn btn-outline-primary">
+        <i class="bi bi-plus-circle me-1"></i> Shop More Products
+    </a>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @Model.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (Model.Orders.Any())
+{
+    <div class="d-flex flex-column gap-4">
+        @foreach (var order in Model.Orders)
+        {
+            string statusBadge = "bg-warning-subtle text-warning-emphasis";
+            if (order.Status == "Shipped") statusBadge = "bg-info-subtle text-info-emphasis";
+            else if (order.Status == "Delivered") statusBadge = "bg-success-subtle text-success";
+            else if (order.Status == "Cancelled") statusBadge = "bg-danger-subtle text-danger";
+
+            <div class="custom-card">
+                <!-- Order Header -->
+                <div class="custom-card-header bg-light">
+                    <div class="d-flex flex-wrap gap-4 align-items-center">
+                        <div>
+                            <div class="text-muted small">ORDER PLACED</div>
+                            <div class="fw-bold text-dark">@order.OrderDate.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")</div>
+                        </div>
+                        <div>
+                            <div class="text-muted small">ORDER NUMBER</div>
+                            <div class="fw-bold text-primary">#@order.OrderId</div>
+                        </div>
+                        <div>
+                            <div class="text-muted small">TOTAL AMOUNT</div>
+                            <div class="fw-bold text-dark">PKR @order.TotalAmount.ToString("N0")</div>
+                        </div>
+                        <div>
+                            <div class="text-muted small">PAYMENT METHOD</div>
+                            <span class="badge bg-secondary-subtle text-dark">@order.PaymentMethod</span>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="badge @statusBadge px-3 py-2 rounded-pill fw-bold fs-6">
+                            @order.Status
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Order Body -->
+                <div class="p-4">
+                    <div class="row g-4">
+                        <div class="col-md-8">
+                            <h6 class="fw-bold text-secondary text-uppercase small mb-3">Purchased Items (@order.Items.Count)</h6>
+                            <div class="d-flex flex-column gap-3">
+                                @foreach (var item in order.Items)
+                                {
+                                    <div class="d-flex align-items-center justify-content-between p-2 rounded bg-light border">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="fw-bold text-dark">@item.ProductName</div>
+                                            <span class="badge bg-primary text-white rounded-pill">Qty: @item.Quantity</span>
+                                        </div>
+                                        <div class="fw-bold text-dark">
+                                            PKR @item.SubTotal.ToString("N0")
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-4 border-start">
+                            <h6 class="fw-bold text-secondary text-uppercase small mb-3">Delivery House Address</h6>
+                            <div class="p-3 rounded-3 bg-light border">
+                                <div class="fw-bold text-dark mb-1">
+                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i>@order.CustomerName
+                                </div>
+                                <div class="text-secondary small mb-1">@order.ShippingAddress</div>
+                                <div class="text-secondary small mb-1">@order.City, @order.PostalCode</div>
+                                <div class="text-secondary small"><i class="bi bi-telephone me-1"></i>@order.Phone</div>
+                                @if (!string.IsNullOrEmpty(order.Notes))
+                                {
+                                    <div class="small text-muted fst-italic mt-2 pt-2 border-top">Note: @order.Notes</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="custom-card p-5 text-center my-4">
+        <i class="bi bi-bag-x fs-1 text-muted d-block mb-3"></i>
+        <h4 class="fw-bold text-dark">No orders found</h4>
+        <p class="text-secondary">You haven't placed any orders with TechWORLD yet.</p>
+        <a asp-page="/Customer/Index" class="btn btn-primary px-4 mt-2">
+            <i class="bi bi-shop me-1"></i> Browse Products
+        </a>
+    </div>
+}
+

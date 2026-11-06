@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350" width="100%" height="100%">
+  <defs>
+    <linearGradient id="heroBloom" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="40%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#172554" />
+    </linearGradient>
+  </defs>
+  <rect x="70" y="30" width="360" height="230" rx="14" fill="#0f172a" stroke="#38bdf8" stroke-width="3"/>
+  <rect x="85" y="45" width="330" height="200" rx="8" fill="url(#heroBloom)"/>
+  <path d="M 130 200 Q 250 80 370 190 Q 300 240 130 200 Z" fill="#38bdf8" opacity="0.85"/>
+  <path d="M 170 210 Q 250 110 330 180 Q 280 230 170 210 Z" fill="#93c5fd" opacity="0.95"/>
+  <circle cx="250" cy="38" r="3.5" fill="#38bdf8"/>
+  <polygon points="40,285 460,285 430,260 70,260" fill="#1e293b"/>
+  <rect x="25" y="285" width="450" height="16" rx="6" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+  <rect x="215" y="287" width="70" height="5" rx="2.5" fill="#64748b"/>
+</svg>
+

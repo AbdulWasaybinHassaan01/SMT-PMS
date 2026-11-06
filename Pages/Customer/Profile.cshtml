@@ -1,0 +1,131 @@
+@page
+@model TechWorldPMS.Pages.Customer.ProfileModel
+@{
+    ViewData["Title"] = "Customer Profile";
+}
+
+<div class="d-flex align-items-center gap-2 mb-4">
+    <i class="bi bi-person-gear text-primary fs-3"></i>
+    <div>
+        <h2 class="fw-bold mb-0 text-dark">My Profile & House Address</h2>
+        <div class="text-muted small">Update your delivery address and personal contact details</div>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @Model.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="custom-card p-4">
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger small mb-3"></div>
+
+                <h5 class="fw-bold text-dark mb-3">
+                    <i class="bi bi-person-lines-fill text-primary me-2"></i>Personal Contact Information
+                </h5>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label-custom" asp-for="Input.FullName">Full Name <span class="text-danger">*</span></label>
+                        <input asp-for="Input.FullName" class="form-control form-control-custom" />
+                        <span asp-validation-for="Input.FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label-custom">Email Address</label>
+                        <input value="@Model.Email" class="form-control form-control-custom bg-light" readonly />
+                        <small class="text-muted">Account login email (read-only)</small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label-custom" asp-for="Input.Phone">Phone Number <span class="text-danger">*</span></label>
+                        <input asp-for="Input.Phone" class="form-control form-control-custom" placeholder="+92 300 1234567" />
+                        <span asp-validation-for="Input.Phone" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label-custom">Account Role</label>
+                        <input value="@Model.Role" class="form-control form-control-custom bg-light fw-bold text-primary" readonly />
+                    </div>
+                </div>
+
+                <h5 class="fw-bold text-dark mb-3 pt-3 border-top">
+                    <i class="bi bi-house-door-fill text-primary me-2"></i>Residential House Delivery Address
+                </h5>
+                <p class="text-secondary small mb-3">
+                    This house address will be automatically used to deliver your tech orders.
+                </p>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <label class="form-label-custom" asp-for="Input.Address">
+                            House / Street Address <span class="text-danger">*</span>
+                        </label>
+                        <textarea asp-for="Input.Address" rows="3" class="form-control form-control-custom" placeholder="e.g. House # 42, Street 9, Sector F-8/2"></textarea>
+                        <span asp-validation-for="Input.Address" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label-custom" asp-for="Input.City">City <span class="text-danger">*</span></label>
+                        <input asp-for="Input.City" class="form-control form-control-custom" placeholder="e.g. Islamabad" />
+                        <span asp-validation-for="Input.City" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label-custom" asp-for="Input.PostalCode">Postal Code</label>
+                        <input asp-for="Input.PostalCode" class="form-control form-control-custom" placeholder="e.g. 44000" />
+                        <span asp-validation-for="Input.PostalCode" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                    <a asp-page="/Customer/Index" class="btn btn-outline-secondary px-4">Cancel</a>
+                    <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 px-4">
+                        <i class="bi bi-check2-circle"></i>
+                        <span>Save Profile & Address</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right: Helpful Info Card -->
+    <div class="col-lg-4">
+        <div class="custom-card p-4">
+            <h5 class="fw-bold text-dark mb-3">
+                <i class="bi bi-info-circle text-primary me-2"></i>Account Security & Details
+            </h5>
+            <div class="d-flex flex-column gap-3">
+                <div class="p-3 bg-light rounded-3 border">
+                    <div class="fw-bold text-dark small"><i class="bi bi-geo-alt-fill text-danger me-1"></i>Saved Delivery Location</div>
+                    <div class="text-muted small mt-1">
+                        @(string.IsNullOrEmpty(Model.Input.Address) ? "No house address saved yet." : $"{Model.Input.Address}, {Model.Input.City}")
+                    </div>
+                </div>
+                <div class="p-3 bg-light rounded-3 border">
+                    <div class="fw-bold text-dark small"><i class="bi bi-shield-lock-fill text-success me-1"></i>Data Protection</div>
+                    <div class="text-muted small mt-1">
+                        All delivery records and user passwords are encrypted and protected in SQL Server.
+                    </div>
+                </div>
+                <div class="p-3 bg-light rounded-3 border">
+                    <div class="fw-bold text-dark small"><i class="bi bi-cart3 text-primary me-1"></i>Quick Ordering</div>
+                    <div class="text-muted small mt-1">
+                        Saving your house address enables instant 1-click checkout for all future purchases.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

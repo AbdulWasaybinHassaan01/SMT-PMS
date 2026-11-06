@@ -1,0 +1,121 @@
+@page
+@model TechWorldPMS.Pages.Products.CreateModel
+@{
+    ViewData["Title"] = "Add New Product";
+}
+
+<div class="d-flex align-items-center gap-2 mb-4">
+    <i class="bi bi-plus-circle text-primary fs-3"></i>
+    <h2 class="fw-bold mb-0 text-dark">Add New Product</h2>
+</div>
+
+<div class="row g-4">
+    <!-- Left: Form Card (From Image 2) -->
+    <div class="col-lg-8">
+        <div class="custom-card p-4">
+            <form method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger small mb-3"></div>
+
+                <div class="row g-3">
+                    <!-- Product Name -->
+                    <div class="col-md-6">
+                        <label class="form-label-custom" asp-for="Input.Name">
+                            Product Name <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="Input.Name" class="form-control form-control-custom" placeholder="Enter product name" />
+                        <span asp-validation-for="Input.Name" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="col-md-6">
+                        <label class="form-label-custom" asp-for="Input.CategoryId">
+                            Category <span class="text-danger">*</span>
+                        </label>
+                        <select asp-for="Input.CategoryId" asp-items="Model.CategoryOptions" class="form-select form-select-custom">
+                            <option value="">Select category</option>
+                        </select>
+                        <span asp-validation-for="Input.CategoryId" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Price (PKR) -->
+                    <div class="col-md-6">
+                        <label class="form-label-custom" asp-for="Input.Price">
+                            Price (PKR) <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="Input.Price" type="number" step="0.01" class="form-control form-control-custom" placeholder="Enter price (e.g. 19999)" />
+                        <span asp-validation-for="Input.Price" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Stock Quantity -->
+                    <div class="col-md-6">
+                        <label class="form-label-custom" asp-for="Input.StockQuantity">
+                            Stock Quantity <span class="text-danger">*</span>
+                        </label>
+                        <input asp-for="Input.StockQuantity" type="number" class="form-control form-control-custom" placeholder="Enter stock quantity" />
+                        <span asp-validation-for="Input.StockQuantity" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="col-12">
+                        <label class="form-label-custom" asp-for="Input.Description">Description</label>
+                        <textarea asp-for="Input.Description" rows="4" class="form-control form-control-custom" placeholder="Enter product description..."></textarea>
+                        <span asp-validation-for="Input.Description" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Product Image -->
+                    <div class="col-12">
+                        <label class="form-label-custom" asp-for="ProductImageFile">Product Image</label>
+                        <div class="d-flex align-items-center gap-3">
+                            <input asp-for="ProductImageFile" type="file" class="form-control form-control-custom" accept="image/*" id="productImageInput" onchange="previewUploadImage(event)" />
+                            <span class="text-muted small text-nowrap">(Optional)</span>
+                        </div>
+                        <div id="imagePreviewContainer" class="mt-2 d-none">
+                            <img id="imagePreview" src="#" alt="Preview" class="rounded border p-1" style="max-height: 100px; max-width: 150px; object-fit: contain;" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons (From Image 2) -->
+                <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                    <a asp-page="/Products/Index" class="btn btn-outline-secondary px-4">Cancel</a>
+                    <button type="submit" class="btn btn-primary d-flex align-items-center gap-2 px-4">
+                        <i class="bi bi-save"></i>
+                        <span>Save Product</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Right: Upgrade Your Setup Promo Card (From Image 2) -->
+    <div class="col-lg-4">
+        <div class="setup-promo-card">
+            <img src="~/images/banner/banner-gaming.png" alt="Gaming Setup" class="setup-promo-img" />
+            <h4 class="setup-promo-title mb-1">Upgrade Your Setup</h4>
+            <div class="setup-promo-sub">with TechWORLD</div>
+            <p class="text-light opacity-75 small mt-3 px-3">
+                Manage your store catalog with high-quality descriptions, precise stock tracking, and professional presentation.
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function previewUploadImage(event) {
+            const input = event.target;
+            const previewContainer = document.getElementById('imagePreviewContainer');
+            const previewImage = document.getElementById('imagePreview');
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewContainer.classList.remove('d-none');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}
+

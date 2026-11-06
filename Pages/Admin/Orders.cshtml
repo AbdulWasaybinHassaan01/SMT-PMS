@@ -1,0 +1,170 @@
+@page
+@model TechWorldPMS.Pages.Admin.OrdersModel
+@{
+    ViewData["Title"] = "Customer Orders";
+}
+
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-receipt fs-3 text-primary"></i>
+        <div>
+            <h2 class="fw-bold mb-0 text-dark">Customer Orders</h2>
+            <div class="text-muted small">Manage online store orders, shipping addresses, and fulfillment</div>
+        </div>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @Model.SuccessMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="custom-card">
+    <div class="custom-card-header">
+        <span class="fw-bold text-dark">All Orders (@Model.Orders.Count)</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-custom">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Shipping House Address</th>
+                    <th>Payment</th>
+                    <th>Total (PKR)</th>
+                    <th>Status</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model.Orders)
+                {
+                    string statusBadge = "bg-warning-subtle text-warning-emphasis";
+                    if (order.Status == "Shipped") statusBadge = "bg-info-subtle text-info-emphasis";
+                    else if (order.Status == "Delivered") statusBadge = "bg-success-subtle text-success";
+                    else if (order.Status == "Cancelled") statusBadge = "bg-danger-subtle text-danger";
+
+                    <tr>
+                        <td class="fw-bold text-primary">#@order.OrderId</td>
+                        <td>
+                            <div class="fw-bold text-dark">@order.CustomerName</div>
+                            <div class="small text-muted"><i class="bi bi-envelope me-1"></i>@order.CustomerEmail</div>
+                            <div class="small text-muted"><i class="bi bi-telephone me-1"></i>@order.Phone</div>
+                        </td>
+                        <td class="small text-secondary">
+                            @order.OrderDate.ToLocalTime().ToString("dd MMM yyyy, hh:mm tt")
+                        </td>
+                        <td>
+                            <div class="small fw-semibold text-dark">
+                                <i class="bi bi-house-door text-primary me-1"></i>@order.ShippingAddress
+                            </div>
+                            <div class="small text-muted">@order.City, @order.PostalCode</div>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border">@order.PaymentMethod</span>
+                        </td>
+                        <td class="fw-bold text-dark">PKR @order.TotalAmount.ToString("N0")</td>
+                        <td>
+                            <span class="badge @statusBadge px-3 py-2 rounded-pill fw-bold">@order.Status</span>
+                        </td>
+                        <td>
+                            <div class="d-flex justify-content-center gap-1">
+                                <!-- Status update form -->
+                                <form method="post" asp-page-handler="UpdateStatus" class="d-flex gap-1">
+                                    <input type="hidden" name="orderId" value="@order.OrderId" />
+                                    <select name="status" class="form-select form-select-sm" style="width: 120px;" onchange="this.form.submit()">
+                                        <option value="Pending" selected="@(order.Status == "Pending")">Pending</option>
+                                        <option value="Processing" selected="@(order.Status == "Processing")">Processing</option>
+                                        <option value="Shipped" selected="@(order.Status == "Shipped")">Shipped</option>
+                                        <option value="Delivered" selected="@(order.Status == "Delivered")">Delivered</option>
+                                        <option value="Cancelled" selected="@(order.Status == "Cancelled")">Cancelled</option>
+                                    </select>
+                                </form>
+                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#orderModal-@order.OrderId" title="View Items">
+                                    <i class="bi bi-list-ul"></i>
+                                </button>
+                            </div>
+
+                            <!-- Order Details Modal -->
+                            <div class="modal fade" id="orderModal-@order.OrderId" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content rounded-4 border-0 shadow">
+                                        <div class="modal-header border-bottom">
+                                            <h5 class="modal-title fw-bold">Order #@order.OrderId Details</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body p-4">
+                                            <div class="row g-3 mb-4">
+                                                <div class="col-md-6">
+                                                    <div class="fw-bold text-muted small">CUSTOMER DETAILS</div>
+                                                    <div class="fw-bold fs-6 mt-1">@order.CustomerName</div>
+                                                    <div class="text-secondary small">Email: @order.CustomerEmail</div>
+                                                    <div class="text-secondary small">Phone: @order.Phone</div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="fw-bold text-muted small">DELIVERY ADDRESS</div>
+                                                    <div class="fw-semibold text-dark mt-1">@order.ShippingAddress</div>
+                                                    <div class="text-secondary small">City: @order.City, @order.PostalCode</div>
+                                                    <div class="text-secondary small">Payment: @order.PaymentMethod</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="fw-bold text-muted small mb-2">ORDERED ITEMS</div>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered align-middle mb-0">
+                                                    <thead class="table-light">
+                                                        <tr>
+                                                            <th>Product</th>
+                                                            <th>Unit Price</th>
+                                                            <th>Qty</th>
+                                                            <th>Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var item in order.Items)
+                                                        {
+                                                            <tr>
+                                                                <td class="fw-semibold">@item.ProductName</td>
+                                                                <td>PKR @item.UnitPrice.ToString("N0")</td>
+                                                                <td>@item.Quantity</td>
+                                                                <td class="fw-bold">PKR @item.SubTotal.ToString("N0")</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr class="table-light">
+                                                            <td colspan="3" class="text-end fw-bold">Grand Total:</td>
+                                                            <td class="fw-bold text-primary">PKR @order.TotalAmount.ToString("N0")</td>
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer border-top">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.Orders.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-cart-x fs-1 d-block mb-2 text-secondary"></i>
+                            No customer orders have been placed yet.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+

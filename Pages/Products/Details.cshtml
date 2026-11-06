@@ -1,0 +1,79 @@
+@page "{id:int}"
+@model TechWorldPMS.Pages.Products.DetailsModel
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="d-flex align-items-center gap-2 mb-4">
+    <i class="bi bi-eye text-primary fs-3"></i>
+    <h2 class="fw-bold mb-0 text-dark">Product Details</h2>
+</div>
+
+<div class="custom-card p-4">
+    <div class="row g-4 align-items-center">
+        <!-- Left: Product Image (From Image 2) -->
+        <div class="col-md-5 text-center">
+            <div class="p-4 rounded-3 bg-dark d-flex align-items-center justify-content-center shadow-sm" style="min-height: 250px;">
+                <img src="@(string.IsNullOrEmpty(Model.Product.ImageUrl) ? "/images/products/default-product.svg" : Model.Product.ImageUrl)" 
+                     alt="@Model.Product.Name" 
+                     class="img-fluid rounded" 
+                     style="max-height: 220px; object-fit: contain;" 
+                     onerror="this.onerror=null; this.src='/images/products/default-product.svg'" />
+            </div>
+        </div>
+
+        <!-- Right: Details Info (From Image 2) -->
+        <div class="col-md-7">
+            <div class="detail-row mb-3">
+                <span class="detail-row-label fs-6">Name:</span>
+                <span class="detail-row-val fs-5 fw-bold text-dark">@Model.Product.Name</span>
+            </div>
+
+            <div class="detail-row mb-3">
+                <span class="detail-row-label fs-6">Category:</span>
+                <span class="detail-row-val">
+                    <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-2 rounded-pill">
+                        @Model.Product.CategoryName
+                    </span>
+                </span>
+            </div>
+
+            <div class="detail-row mb-3">
+                <span class="detail-row-label fs-6">Price:</span>
+                <span class="detail-row-val fs-5 fw-extrabold text-primary">PKR @Model.Product.Price.ToString("N0")</span>
+            </div>
+
+            <div class="detail-row mb-3">
+                <span class="detail-row-label fs-6">Stock:</span>
+                <span class="detail-row-val">
+                    <span class="badge @(Model.Product.StockQuantity > 5 ? "bg-success-subtle text-success" : (Model.Product.StockQuantity > 0 ? "bg-warning-subtle text-warning-emphasis" : "bg-danger-subtle text-danger")) px-3 py-2 rounded-pill fw-bold">
+                        @Model.Product.StockQuantity Units
+                    </span>
+                </span>
+            </div>
+
+            <div class="detail-row mb-4">
+                <span class="detail-row-label fs-6 align-top">Description:</span>
+                <div class="detail-row-val text-secondary mt-1 lh-base" style="font-size: 0.95rem;">
+                    @(string.IsNullOrEmpty(Model.Product.Description) ? "No description provided." : Model.Product.Description)
+                </div>
+            </div>
+
+            <!-- Back to List & Quick Actions (From Image 2) -->
+            <div class="d-flex flex-wrap gap-2 pt-3 border-top">
+                <a asp-page="/Products/Index" class="btn btn-primary d-flex align-items-center gap-2 px-4">
+                    <i class="bi bi-arrow-left"></i>
+                    <span>Back to List</span>
+                </a>
+                <a asp-page="/Products/Edit" asp-route-id="@Model.Product.ProductId" class="btn btn-outline-primary px-3">
+                    <i class="bi bi-pencil me-1"></i> Edit Product
+                </a>
+                <a asp-page="/Products/Delete" asp-route-id="@Model.Product.ProductId" class="btn btn-outline-danger px-3">
+                    <i class="bi bi-trash me-1"></i> Delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,177 @@
+@page
+@model TechWorldPMS.Pages.Customer.CheckoutModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<div class="d-flex align-items-center gap-2 mb-4">
+    <i class="bi bi-shield-check text-primary fs-3"></i>
+    <h2 class="fw-bold mb-0 text-dark">Secure Checkout</h2>
+</div>
+
+<form method="post">
+    <div class="row g-4">
+        <!-- Left: Shipping Address & Payment Selection -->
+        <div class="col-lg-8">
+            <!-- Delivery Address Card -->
+            <div class="custom-card p-4 mb-4">
+                <h5 class="fw-bold text-dark mb-3">
+                    <i class="bi bi-house-door-fill text-primary me-2"></i>1. Shipping & House Address
+                </h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label-custom" asp-for="Input.CustomerName">Full Name <span class="text-danger">*</span></label>
+                        <input asp-for="Input.CustomerName" class="form-control form-control-custom" placeholder="Recipient's name" />
+                        <span asp-validation-for="Input.CustomerName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label-custom" asp-for="Input.Phone">Phone Number <span class="text-danger">*</span></label>
+                        <input asp-for="Input.Phone" class="form-control form-control-custom" placeholder="+92 300 1234567" />
+                        <span asp-validation-for="Input.Phone" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label-custom" asp-for="Input.ShippingAddress">
+                            House / Residential Address <span class="text-danger">*</span>
+                        </label>
+                        <textarea asp-for="Input.ShippingAddress" rows="2" class="form-control form-control-custom" placeholder="House #, Street name, Sector/Block, Area"></textarea>
+                        <span asp-validation-for="Input.ShippingAddress" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label-custom" asp-for="Input.City">City <span class="text-danger">*</span></label>
+                        <input asp-for="Input.City" class="form-control form-control-custom" placeholder="e.g. Islamabad, Lahore, Karachi" />
+                        <span asp-validation-for="Input.City" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label-custom" asp-for="Input.PostalCode">Postal Code</label>
+                        <input asp-for="Input.PostalCode" class="form-control form-control-custom" placeholder="e.g. 44000" />
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label-custom" asp-for="Input.Notes">Delivery Instructions (Optional)</label>
+                        <input asp-for="Input.Notes" class="form-control form-control-custom" placeholder="e.g. Leave with security guard or call upon arrival" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Method Card -->
+            <div class="custom-card p-4">
+                <h5 class="fw-bold text-dark mb-3">
+                    <i class="bi bi-credit-card-fill text-primary me-2"></i>2. Payment Method
+                </h5>
+
+                <div class="d-flex flex-column gap-3 mb-3">
+                    <!-- Cash on Delivery -->
+                    <label class="p-3 border rounded-3 d-flex align-items-center justify-content-between cursor-pointer payment-option-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <input type="radio" asp-for="Input.PaymentMethod" value="Cash on Delivery" class="form-check-input mt-0" checked onchange="togglePaymentFields('cod')" />
+                            <div>
+                                <div class="fw-bold text-dark">Cash on Delivery (COD)</div>
+                                <div class="small text-muted">Pay in cash when your package arrives at your doorstep</div>
+                            </div>
+                        </div>
+                        <i class="bi bi-cash-coin fs-3 text-success"></i>
+                    </label>
+
+                    <!-- Credit / Debit Card -->
+                    <label class="p-3 border rounded-3 d-flex align-items-center justify-content-between cursor-pointer payment-option-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <input type="radio" asp-for="Input.PaymentMethod" value="Credit/Debit Card" class="form-check-input mt-0" onchange="togglePaymentFields('card')" />
+                            <div>
+                                <div class="fw-bold text-dark">Credit / Debit Card</div>
+                                <div class="small text-muted">Visa, MasterCard, PayPak</div>
+                            </div>
+                        </div>
+                        <i class="bi bi-credit-card-2-front fs-3 text-primary"></i>
+                    </label>
+
+                    <!-- Mobile Wallet / Bank -->
+                    <label class="p-3 border rounded-3 d-flex align-items-center justify-content-between cursor-pointer payment-option-card">
+                        <div class="d-flex align-items-center gap-3">
+                            <input type="radio" asp-for="Input.PaymentMethod" value="EasyPaisa / JazzCash / Bank" class="form-check-input mt-0" onchange="togglePaymentFields('wallet')" />
+                            <div>
+                                <div class="fw-bold text-dark">EasyPaisa / JazzCash / Online Bank</div>
+                                <div class="small text-muted">Direct digital payment via mobile wallet</div>
+                            </div>
+                        </div>
+                        <i class="bi bi-phone fs-3 text-warning"></i>
+                    </label>
+                </div>
+
+                <!-- Card Details Container (conditionally shown) -->
+                <div id="cardFields" class="p-3 rounded-3 bg-light border mt-3 d-none">
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <label class="form-label-custom">Card Number</label>
+                            <input type="text" asp-for="Input.CardNumber" class="form-control" placeholder="4242 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4242" />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label-custom">MM / YY</label>
+                            <input type="text" asp-for="Input.CardExpiry" class="form-control" placeholder="12/28" />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label-custom">CVV</label>
+                            <input type="password" asp-for="Input.CardCVV" class="form-control" placeholder="123" maxlength="4" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Order Summary & Place Order Button -->
+        <div class="col-lg-4">
+            <div class="custom-card p-4">
+                <h5 class="fw-bold text-dark mb-3">Order Details</h5>
+                <div class="list-group list-group-flush mb-3">
+                    @foreach (var item in Model.CartItems)
+                    {
+                        <div class="list-group-item px-0 py-2 d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-semibold text-dark small text-truncate" style="max-width: 190px;">@item.ProductName</div>
+                                <div class="text-muted" style="font-size: 0.75rem;">@item.Quantity &times; PKR @item.Price.ToString("N0")</div>
+                            </div>
+                            <span class="fw-bold text-dark small">PKR @item.SubTotal.ToString("N0")</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">Subtotal</span>
+                    <span class="fw-semibold">PKR @Model.TotalAmount.ToString("N0")</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-secondary">Delivery Charge</span>
+                    <span class="text-success fw-bold">FREE</span>
+                </div>
+                <hr />
+                <div class="d-flex justify-content-between mb-4">
+                    <span class="fs-5 fw-bold text-dark">Grand Total</span>
+                    <span class="fs-4 fw-extrabold text-primary">PKR @Model.TotalAmount.ToString("N0")</span>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100 py-3 shadow d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-bag-check-fill"></i>
+                    <span>Place Order Now</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function togglePaymentFields(type) {
+            const cardFields = document.getElementById('cardFields');
+            if (type === 'card') {
+                cardFields.classList.remove('d-none');
+            } else {
+                cardFields.classList.add('d-none');
+            }
+        }
+    </script>
+}
+

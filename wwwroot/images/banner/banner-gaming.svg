@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 350" width="100%" height="100%">
+  <defs>
+    <linearGradient id="neonBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4c1d95" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e1b4b" />
+    </linearGradient>
+    <linearGradient id="rogGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ec4899" />
+      <stop offset="50%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" rx="16" fill="url(#neonBg)"/>
+  <rect x="75" y="40" width="350" height="220" rx="12" fill="#09090b" stroke="#ec4899" stroke-width="3"/>
+  <rect x="90" y="55" width="320" height="190" rx="6" fill="#18181b"/>
+  <path d="M 170 160 Q 250 90 330 140 Q 270 210 170 160 Z" fill="url(#rogGrad)"/>
+  <polygon points="45,285 455,285 425,260 75,260" fill="#27272a"/>
+  <rect x="30" y="285" width="440" height="16" rx="6" fill="#09090b" stroke="#8b5cf6" stroke-width="2"/>
+  <line x1="50" y1="300" x2="450" y2="300" stroke="#06b6d4" stroke-width="3" stroke-linecap="round"/>
+</svg>
+

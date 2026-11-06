@@ -1,0 +1,252 @@
+@using System.Security.Claims
+@inject TechWorldPMS.Repositories.ICartRepository CartRepo
+@{
+    bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    bool isAdmin = User.IsInRole("Admin") || User.IsInRole("Stock Manager");
+    string userName = User.Identity?.Name ?? "User";
+    string userRole = User.FindFirst("UserRoleDisplay")?.Value ?? (isAdmin ? "Admin & Stock Manager" : "Customer");
+    
+    int cartCount = 0;
+    if (isAuthenticated && !isAdmin)
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (int.TryParse(userIdClaim, out int uid))
+        {
+            try
+            {
+                cartCount = await CartRepo.GetCartCountAsync(uid);
+            }
+            catch
+            {
+                cartCount = 0;
+            }
+        }
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TechWORLD PMS</title>
+    
+    <!-- Bootstrap 5.3 & Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="@(isAdmin ? "admin-mode" : "customer-mode")">
+    
+    <!-- TOP HEADER BANNER (Matching Image 2 without red highlighted text) -->
+    <header class="top-brand-banner">
+        <div class="container-fluid px-4">
+            <div class="d-flex align-items-center justify-content-between py-2">
+                <!-- Left: TechWORLD Brand -->
+                <div class="d-flex align-items-center gap-3">
+                    <div class="brand-icon-box">
+                        <i class="bi bi-laptop"></i>
+                    </div>
+                    <div>
+                        <div class="brand-title">TechWORLD</div>
+                        <div class="brand-tagline">Computers &middot; Laptops &middot; Accessories</div>
+                    </div>
+                </div>
+
+                <!-- Center: Product Management System (PMS) Title -->
+                <div class="banner-center text-center d-none d-md-block">
+                    <div class="system-title">Product Management System (PMS)</div>
+                </div>
+
+                <!-- Right: Manage Tech Store Products with Ease & Laptop graphic -->
+                <div class="d-flex align-items-center gap-3">
+                    <div class="text-end d-none d-lg-block">
+                        <div class="banner-highlight"><em>Manage</em> Your Tech Store Products</div>
+                        <div class="banner-subtext">with Ease!</div>
+                    </div>
+                    <img src="~/images/banner/banner-gaming.png" alt="Tech Setup" class="banner-mini-laptop d-none d-sm-block" />
+                    
+                    @if (isAuthenticated)
+                    {
+                        <div class="dropdown ms-2">
+                            <button class="btn btn-user-badge dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="avatar-circle">
+                                    <i class="bi @(isAdmin ? "bi-shield-check" : "bi-person")"></i>
+                                </div>
+                                <span class="d-none d-sm-inline fw-semibold">@userName</span>
+                                <span class="badge @(isAdmin ? "bg-warning text-dark" : "bg-info text-dark")" style="font-size: 0.7rem;">@userRole</span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                                <li class="px-3 py-2 border-bottom">
+                                    <div class="fw-bold text-dark">@userName</div>
+                                    <div class="small text-muted">@User.FindFirst(ClaimTypes.Email)?.Value</div>
+                                    <span class="badge @(isAdmin ? "bg-primary" : "bg-success") mt-1">@userRole</span>
+                                </li>
+                                @if (isAdmin)
+                                {
+                                    <li><a class="dropdown-item py-2" asp-page="/Admin/Index"><i class="bi bi-speedometer2 me-2 text-primary"></i>Admin Dashboard</a></li>
+                                    <li><a class="dropdown-item py-2" asp-page="/Products/Index"><i class="bi bi-box-seam me-2 text-primary"></i>Products</a></li>
+                                    <li><a class="dropdown-item py-2" asp-page="/Categories/Index"><i class="bi bi-grid-3x3-gap me-2 text-primary"></i>Categories</a></li>
+                                    <li><a class="dropdown-item py-2" asp-page="/Admin/Orders"><i class="bi bi-receipt me-2 text-primary"></i>Customer Orders</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item py-2" asp-page="/Customer/Index"><i class="bi bi-shop me-2 text-success"></i>Switch to Customer View</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="dropdown-item py-2" asp-page="/Customer/Index"><i class="bi bi-shop me-2 text-primary"></i>Shop Products</a></li>
+                                    <li><a class="dropdown-item py-2" asp-page="/Customer/Cart"><i class="bi bi-cart3 me-2 text-primary"></i>My Cart (@cartCount)</a></li>
+                                    <li><a class="dropdown-item py-2" asp-page="/Customer/Orders"><i class="bi bi-bag-check me-2 text-primary"></i>My Orders</a></li>
+                                    <li><a class="dropdown-item py-2" asp-page="/Customer/Profile"><i class="bi bi-person-gear me-2 text-primary"></i>My Profile & Address</a></li>
+                                }
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item py-2 text-danger" asp-page="/Account/Logout">
+                                        <i class="bi bi-box-arrow-left me-2"></i>Sign Out
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="d-flex gap-2 ms-2">
+                            <a asp-page="/Account/Login" class="btn btn-sm btn-outline-light rounded-pill px-3">Sign In</a>
+                            <a asp-page="/Account/Register" class="btn btn-sm btn-primary rounded-pill px-3">Register</a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </header>
+
+    @if (isAdmin)
+    {
+        <!-- ADMIN & STOCK MANAGER LAYOUT WITH SIDEBAR (Matching Image 2) -->
+        <div class="admin-wrapper d-flex">
+            <!-- Sidebar -->
+            <aside class="admin-sidebar">
+                <div class="sidebar-brand-header">
+                    <i class="bi bi-laptop me-2 text-info"></i>
+                    <span>TechWORLD</span>
+                </div>
+                <nav class="sidebar-nav">
+                    <a asp-page="/Admin/Index" class="sidebar-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/Index" ? "active" : "")">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a asp-page="/Products/Index" class="sidebar-link @(ViewContext.RouteData.Values["page"]?.ToString()?.StartsWith("/Products") == true ? "active" : "")">
+                        <i class="bi bi-box-seam"></i>
+                        <span>Products</span>
+                    </a>
+                    <a asp-page="/Categories/Index" class="sidebar-link @(ViewContext.RouteData.Values["page"]?.ToString()?.StartsWith("/Categories") == true ? "active" : "")">
+                        <i class="bi bi-grid-3x3-gap"></i>
+                        <span>Categories</span>
+                    </a>
+                    <a asp-page="/Admin/Orders" class="sidebar-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/Orders" ? "active" : "")">
+                        <i class="bi bi-receipt"></i>
+                        <span>Customer Orders</span>
+                    </a>
+                    <a asp-page="/About" class="sidebar-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/About" ? "active" : "")">
+                        <i class="bi bi-info-circle"></i>
+                        <span>About</span>
+                    </a>
+                    <div class="sidebar-divider"></div>
+                    <a asp-page="/Customer/Index" class="sidebar-link text-warning-emphasis">
+                        <i class="bi bi-shop"></i>
+                        <span>Customer Store</span>
+                    </a>
+                    <a asp-page="/Account/Logout" class="sidebar-link logout-link">
+                        <i class="bi bi-box-arrow-left"></i>
+                        <span>Logout</span>
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="admin-main-content flex-grow-1">
+                @RenderBody()
+            </main>
+        </div>
+    }
+    else
+    {
+        <!-- CUSTOMER STOREFRONT LAYOUT -->
+        <nav class="navbar navbar-expand-lg customer-navbar shadow-sm">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center gap-2 fw-bold text-dark" asp-page="/Customer/Index">
+                    <i class="bi bi-bag-heart-fill text-primary fs-4"></i>
+                    <span>TechWORLD Store</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#customerNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="customerNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Customer/Index" ? "active fw-bold text-primary" : "")" asp-page="/Customer/Index">
+                                <i class="bi bi-grid me-1"></i> Browse Products
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Customer/Orders" ? "active fw-bold text-primary" : "")" asp-page="/Customer/Orders">
+                                <i class="bi bi-box me-1"></i> My Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Customer/Profile" ? "active fw-bold text-primary" : "")" asp-page="/Customer/Profile">
+                                <i class="bi bi-house-gear me-1"></i> My Address & Profile
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="d-flex align-items-center gap-3">
+                        <a asp-page="/Customer/Cart" class="btn btn-outline-primary position-relative rounded-pill px-3 py-2">
+                            <i class="bi bi-cart3 fs-5 me-1"></i>
+                            <span class="fw-semibold">Cart</span>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                @cartCount
+                            </span>
+                        </a>
+                        <a asp-page="/Account/Logout" class="btn btn-outline-secondary rounded-pill px-3 py-2">
+                            <i class="bi bi-box-arrow-left me-1"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="customer-main-content py-4">
+            <div class="container">
+                @RenderBody()
+            </div>
+        </main>
+    }
+
+    <!-- FOOTER (Matching Image 2) -->
+    <footer class="app-footer text-white py-3">
+        <div class="container-fluid px-4">
+            <div class="row align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-2 mb-md-0">
+                    <span class="fw-bold">TechWORLD</span> &ndash; <em>Smart Management for a Smarter Store!</em>
+                </div>
+                <div class="col-md-6 text-center text-md-end footer-tags d-flex justify-content-center justify-content-md-end gap-4">
+                    <span><i class="bi bi-cart3 text-info me-1"></i> Shop Smart</span>
+                    <span><i class="bi bi-laptop text-info me-1"></i> Work Better</span>
+                    <span><i class="bi bi-rocket-takeoff text-info me-1"></i> Grow Bigger</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
